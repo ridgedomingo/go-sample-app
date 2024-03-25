@@ -19,7 +19,7 @@ type Customer struct {
 func NewRouter () http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/customers", getAllCustomers)
+	mux.HandleFunc("GET /customers", getAllCustomers)
 
 	return mux
 }
