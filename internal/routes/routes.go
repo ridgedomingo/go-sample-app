@@ -21,6 +21,7 @@ func NewRouter () http.Handler {
 
 	mux.HandleFunc("GET /customers", getAllCustomers)
 	mux.HandleFunc("POST /customer", createCustomer)
+	mux.HandleFunc("PUT /customer/{email}", updateCustomer)
 
 	return mux
 }
@@ -58,6 +59,27 @@ func createCustomer(w http.ResponseWriter, r *http.Request) {
 	_, err = database.DBCon.Exec("INSERT INTO CUSTOMERS VALUES (:1, :2, :3, :4)", customer.Email, customer.FirstName, customer.LastName, customer.Sex)
 
 	 response := []byte(fmt.Sprintf("Successfully created customer %s %s", customer.FirstName,  customer.LastName ))
+	w.Write(response)
+
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func updateCustomer(w http.ResponseWriter, r *http.Request) {
+	email := r.PathValue("email")
+	decodeBody := json.NewDecoder(r.Body)
+	customer := new(Customer)
+	err := decodeBody.Decode(&customer)
+
+	if err != nil {
+		fmt.Println("err", err)
+	}
+	_, err = database.DBCon.Exec("UPDATE CUSTOMERS SET FIRST_NAME = :1, LAST_NAME = :2, SEX = :3 WHERE EMAIL = :4", 
+	customer.FirstName, customer.LastName, customer.Sex, email)
+
+	 response := []byte(fmt.Sprintf("Successfully updated customer  %s", email))
 	w.Write(response)
 
 
