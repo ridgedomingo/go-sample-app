@@ -22,6 +22,7 @@ func NewRouter () http.Handler {
 	mux.HandleFunc("GET /customers", getAllCustomers)
 	mux.HandleFunc("POST /customer", createCustomer)
 	mux.HandleFunc("PUT /customer/{email}", updateCustomer)
+	mux.HandleFunc("DELETE /customer/{email}", deleteCustomer)
 
 	return mux
 }
@@ -86,4 +87,20 @@ func updateCustomer(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+
+func deleteCustomer(w http.ResponseWriter, r *http.Request) {
+	email := r.PathValue("email")
+
+	_, err := database.DBCon.Exec("DELETE FROM CUSTOMERS WHERE EMAIL = :1", email)
+
+	if err != nil {
+		panic(err)
+	}
+
+	 response := []byte(fmt.Sprintf("Successfully deleted customer  %s", email))
+	w.Write(response)
+
+
 }
