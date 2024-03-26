@@ -43,6 +43,8 @@ func getAllCustomers(w http.ResponseWriter, r *http.Request) {
 		customers = append(customers, customer)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(customers); err != nil {
 		fmt.Println(err)
 	}
